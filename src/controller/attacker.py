@@ -1,17 +1,17 @@
 
 from threading import Thread
 import queue
-import GetImages
-from mouseCapture import CoordinateSenderApp
-import KeyboardCapture
+import remote_control.src.controller.get_images as get_images
+from remote_control.src.controller.mouse_capture import CoordinateSenderApp
+import remote_control.src.controller.keyboard_capture as keyboard_capture
 def main():
     image_queue = queue.Queue()
 
-    server = GetImages.start()
-    images =Thread(target=GetImages.listen_loop,args=(server, image_queue),daemon=True)
+    server = get_images.start()
+    images =Thread(target=get_images.listen_loop,args=(server, image_queue),daemon=True)
     app = CoordinateSenderApp(host="127.0.0.1", port=9000,image_queue=image_queue)
     tk_app = Thread(target=app.run,daemon=True)
-    keyboard =Thread(target=KeyboardCapture.start_controller() , daemon=True)
+    keyboard =Thread(target=keyboard_capture.start_controller() , daemon=True)
 
     tk_app.start()
     images.start()
